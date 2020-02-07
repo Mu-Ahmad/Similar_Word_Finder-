@@ -7,8 +7,8 @@ def parse(url):
     try:
         return re.get(url, verify=False)
     except:
-        print('Wait, slow connection!')
-        sleep(10)
+        print('Wait, slow connection!\nYou might need to restart the program!')
+        sleep(15)
         parse(url)
 
 
@@ -78,3 +78,4 @@ try:
 except Exception as e:
     print(e)
     print('Check Your URL or INTERNET Connection or FileName')
+    initiateSequence()
