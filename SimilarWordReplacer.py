@@ -28,23 +28,26 @@ def findSynonyms(word):
         types.append(_.text)
     # for synonyms in syn_soup.find_all('div', {'class': 'synList'}):
     for synonyms in syn_soup.find_all('div', {'class': 'row'}):
-        relevent_synonym_list = []
+        relevent_synonym_list = [words.text for words in synonyms.find_all('strong', {
+                                                                           'class': 'syn'})]
         general_synonym_list = []
-        for words in synonyms.find_all('strong', {'class': 'syn'}):
-            relevent_synonym_list.append(words.text)
         for words in synonyms.find_all('span', {'class': 'syn'}):
             for s_word in words.text[1:].replace(' ', '').split(','):
                 general_synonym_list.append(s_word)
 
-        print('-'*90)
+        print('_'*90)
         print(f'{word.upper()} ({types[i]}):')
-        print('These are the More Relevent words:\n', relevent_synonym_list)
-        print('These are Genral words:\n', general_synonym_list)
         print('-'*90)
+        print(
+            f'>>> These {len(relevent_synonym_list)} are the More Relevent words to "{word.upper()}({types[i]})":\n', relevent_synonym_list)
+        print('-'*90)
+        print(
+            f'>>> These {len(general_synonym_list)} are Genral words related to "{word.upper()}({types[i]})":\n', general_synonym_list)
+        print('_'*90)
         i += 1
     if not relevent_synonym_list:
         print(
-            '1 million word we know.\nBut, no word similar to this could be found in our database!')
+            '>>> We are Sorry!\n1 million words we know.\nBut, no word similar to this could be found in our database!')
 
 
 def replaceWord(word):
