@@ -8,7 +8,7 @@ def parse(url):
         return re.get(url, verify=False)
     except:
         print('Wait, slow connection!\nYou might need to restart the program!')
-        sleep(15)
+        sleep(5)
         parse(url)
 
 
@@ -21,7 +21,6 @@ def findSynonyms(word):
         syn_r = re.get(url)
     except:
         syn_r = parse(url)
-
     syn_soup = bs(syn_r.text, 'html.parser')
     del syn_r
     for _ in syn_soup.find_all('span', {'class': 'pos'}):
@@ -48,6 +47,33 @@ def findSynonyms(word):
     if not relevent_synonym_list:
         print(
             '>>> We are Sorry!\n1 million words we know.\nBut, no word similar to this could be found in our database!')
+        print('_'*90)
+    try:
+        del relevent_synonym_list
+        del general_synonym_list
+    except:
+        pass
+
+def useInSentence(word):
+    url = f'https://wordsinasentence.com/{word}-in-a-sentence/'
+    try:
+        sen_r = re.get(url)
+    except:
+        sen_r = parse(url)
+    sen_soup = bs(sen_r.text, 'html.parser')
+    if sen_soup:
+        w_def = sen_soup.select('p')[1].text
+        print(f'Defination of {word}:\n\t{w_def}\n')
+        sen_soup = sen_soup.find_all('div',{'class':'thecontent clearfix'})[0]
+        sen_soup = sen_soup.find_all('a', {'class':'audio-play'})
+        sen_list = [sen['data-keywords'] for sen in sen_soup]
+        print(f'Usage of {word} in sentence:\n')
+        count = 1
+        for sentence in sen_list:
+            sentence = sentence.replace(word.casefold(), f'"{word}"')
+            print(f'{count}. {sentence}.')
+            count+=1
+    
 
 
 def replaceWord(word):
@@ -68,10 +94,12 @@ def replaceWord(word):
 def initiateSequence():
     word = input('Enter the desired word to find the synonyms:')
     findSynonyms(word)
+    useInSentence(word)
     choice = input(f'Would you like to replace this word >> {word} << ? y/n')
     if choice.lower() == 'y':
         replaceWord(word)
     print('loading.....')
+    print('-'*90)
     # sleep(10)
     initiateSequence()
 
@@ -80,5 +108,5 @@ try:
     initiateSequence()
 except Exception as e:
     print(e)
-    print('Check Your URL or INTERNET Connection or FileName')
+    print('>>>>> Check Your URL or INTERNET Connection or FileName')
     initiateSequence()
